@@ -10,7 +10,7 @@ use Workbench\App\Models\User;
 
 use function Pest\Livewire\livewire;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 function createUserWithAnimalForRelationManagerTest(): array
 {
@@ -44,7 +44,7 @@ function rawAnimalTranslationsForRelationManagerTest(Animal $animal, string $att
     return json_decode($value, associative: true, flags: JSON_THROW_ON_ERROR);
 }
 
-it('displays relation manager table fields using the active locale', function () {
+it('displays relation manager table fields using the active locale', function (): void {
     [$user, $animal] = createUserWithAnimalForRelationManagerTest();
 
     livewire(AnimalsRelationManager::class, [
@@ -61,7 +61,7 @@ it('displays relation manager table fields using the active locale', function ()
         ->assertTableColumnStateSet('is_active', true, $animal);
 });
 
-it('creates related records with translations under the active locale', function () {
+it('creates related records with translations under the active locale', function (): void {
     $user = User::factory()->create();
 
     livewire(AnimalsRelationManager::class, [
@@ -87,7 +87,7 @@ it('creates related records with translations under the active locale', function
         ]);
 });
 
-it('rehydrates relation manager create action fields when the active locale changes', function () {
+it('rehydrates relation manager create action fields when the active locale changes', function (): void {
     $user = User::factory()->create();
 
     livewire(AnimalsRelationManager::class, [
@@ -118,7 +118,7 @@ it('rehydrates relation manager create action fields when the active locale chan
         ]);
 });
 
-it('updates only the active locale from a relation manager edit action', function () {
+it('updates only the active locale from a relation manager edit action', function (): void {
     [$user, $animal] = createUserWithAnimalForRelationManagerTest();
 
     livewire(AnimalsRelationManager::class, [
@@ -153,7 +153,7 @@ it('updates only the active locale from a relation manager edit action', functio
         ]);
 });
 
-it('rehydrates relation manager edit action fields when the active locale changes', function () {
+it('rehydrates relation manager edit action fields when the active locale changes', function (): void {
     [$user, $animal] = createUserWithAnimalForRelationManagerTest();
 
     livewire(AnimalsRelationManager::class, [

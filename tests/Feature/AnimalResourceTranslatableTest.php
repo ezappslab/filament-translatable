@@ -10,7 +10,7 @@ use Workbench\App\Models\Animal;
 
 use function Pest\Livewire\livewire;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 function createAnimalForTranslatableResourceTest(): Animal
 {
@@ -27,7 +27,7 @@ function createAnimalForTranslatableResourceTest(): Animal
     ]);
 }
 
-it('displays translated table fields using the active locale', function () {
+it('displays translated table fields using the active locale', function (): void {
     $animal = createAnimalForTranslatableResourceTest();
 
     livewire(ListAnimals::class)
@@ -41,7 +41,7 @@ it('displays translated table fields using the active locale', function () {
         ->assertTableColumnStateSet('is_active', true, $animal);
 });
 
-it('stores created translatable fields under the active locale', function () {
+it('stores created translatable fields under the active locale', function (): void {
     livewire(CreateAnimal::class)
         ->set('activeLocale', Locale::Bulgarian->value)
         ->fillForm([
@@ -60,7 +60,7 @@ it('stores created translatable fields under the active locale', function () {
         ->and($animal->is_active)->toBeFalse();
 });
 
-it('rehydrates translatable create form fields when the active locale changes', function () {
+it('rehydrates translatable create form fields when the active locale changes', function (): void {
     livewire(CreateAnimal::class)
         ->fillForm([
             'name' => 'Otter',
@@ -85,7 +85,7 @@ it('rehydrates translatable create form fields when the active locale changes', 
         ]);
 });
 
-it('updates only the active locale translation without overwriting other translations', function () {
+it('updates only the active locale translation without overwriting other translations', function (): void {
     $animal = createAnimalForTranslatableResourceTest();
 
     livewire(EditAnimal::class, ['record' => $animal->getKey()])
@@ -112,7 +112,7 @@ it('updates only the active locale translation without overwriting other transla
         ->and($animal->is_active)->toBeFalse();
 });
 
-it('preserves unsaved locale-specific edit state when switching back to a locale', function () {
+it('preserves unsaved locale-specific edit state when switching back to a locale', function (): void {
     $animal = createAnimalForTranslatableResourceTest();
 
     livewire(EditAnimal::class, ['record' => $animal->getKey()])
@@ -145,7 +145,7 @@ it('preserves unsaved locale-specific edit state when switching back to a locale
         ->and($animal->getTranslation('description', Locale::Bulgarian->value))->toBe('Социално горско животно.');
 });
 
-it('displays translated view fields using the active locale', function () {
+it('displays translated view fields using the active locale', function (): void {
     $animal = createAnimalForTranslatableResourceTest();
 
     livewire(ViewAnimal::class, ['record' => $animal->getKey()])
@@ -163,7 +163,7 @@ it('displays translated view fields using the active locale', function () {
         ]);
 });
 
-it('switches the displayed and edited translations when the active locale changes', function () {
+it('switches the displayed and edited translations when the active locale changes', function (): void {
     $animal = createAnimalForTranslatableResourceTest();
 
     livewire(EditAnimal::class, ['record' => $animal->getKey()])

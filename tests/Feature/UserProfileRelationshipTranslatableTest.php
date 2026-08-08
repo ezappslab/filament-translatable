@@ -11,7 +11,7 @@ use Workbench\App\Models\User;
 
 use function Pest\Livewire\livewire;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 function createUserWithTranslatableProfileForRelationshipTest(): User
 {
@@ -44,7 +44,7 @@ function rawProfileTranslationsForRelationshipTest(Profile $profile, string $att
     return json_decode($value, associative: true, flags: JSON_THROW_ON_ERROR);
 }
 
-it('creates translatable profile fields from a relationship section for the active locale', function () {
+it('creates translatable profile fields from a relationship section for the active locale', function (): void {
     livewire(CreateUser::class)
         ->set('activeLocale', Locale::Bulgarian->value)
         ->fillForm([
@@ -76,7 +76,7 @@ it('creates translatable profile fields from a relationship section for the acti
         ]);
 });
 
-it('rehydrates relationship section create form fields when the active locale changes', function () {
+it('rehydrates relationship section create form fields when the active locale changes', function (): void {
     livewire(CreateUser::class)
         ->fillForm([
             'name' => 'Jordan Hale',
@@ -110,7 +110,7 @@ it('rehydrates relationship section create form fields when the active locale ch
         ]);
 });
 
-it('edits only the active locale on an existing relationship profile', function () {
+it('edits only the active locale on an existing relationship profile', function (): void {
     $user = createUserWithTranslatableProfileForRelationshipTest();
 
     livewire(EditUser::class, ['record' => $user->getKey()])
@@ -143,7 +143,7 @@ it('edits only the active locale on an existing relationship profile', function 
         ]);
 });
 
-it('switches relationship section fields between locales without overwriting existing translations', function () {
+it('switches relationship section fields between locales without overwriting existing translations', function (): void {
     $user = createUserWithTranslatableProfileForRelationshipTest();
 
     livewire(EditUser::class, ['record' => $user->getKey()])
@@ -186,7 +186,7 @@ it('switches relationship section fields between locales without overwriting exi
         ]);
 });
 
-it('views translatable profile fields from a relationship section using the active locale', function () {
+it('views translatable profile fields from a relationship section using the active locale', function (): void {
     $user = createUserWithTranslatableProfileForRelationshipTest();
 
     livewire(ViewUser::class, ['record' => $user->getKey()])

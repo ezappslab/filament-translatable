@@ -12,9 +12,9 @@ The package provides:
 
 ## Requirements
 
-- PHP 8.2 or higher
+- PHP 8.4 or higher
+- Laravel 12 or 13
 - Filament 5
-- `spatie/laravel-translatable` 6.11.4 or higher
 
 ## Installation
 

@@ -16,7 +16,7 @@ class FilamentTranslatableServiceProvider extends PackageServiceProvider
         $package
             ->name('filament-translatable')
             ->hasConfigFile()
-            ->hasInstallCommand(function (InstallCommand $command) {
+            ->hasInstallCommand(function (InstallCommand $command): void {
                 $command
                     ->publishConfigFile()
                     ->copyAndRegisterServiceProviderInApp();
