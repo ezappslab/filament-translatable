@@ -29,7 +29,7 @@ class SelectLocaleAction extends SelectAction
             $options = [];
 
             foreach ($plugin->getLocales() as $locale) {
-                $options[$locale->value] = $locale->name;
+                $options[$locale->value] = $locale->getLabel();
             }
 
             return $options;

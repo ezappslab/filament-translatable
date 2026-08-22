@@ -2,10 +2,12 @@
 
 namespace Infinity\FilamentTranslatable\Enums;
 
+use Filament\Support\Contracts\HasLabel;
+
 /**
  * The supported translation locales.
  */
-enum Locale: string
+enum Locale: string implements HasLabel
 {
     case Abkhazian = 'ab';
     case Afar = 'aa';
@@ -191,4 +193,14 @@ enum Locale: string
     case Yoruba = 'yo';
     case Zhuang = 'za';
     case Zulu = 'zu';
+
+    /**
+     * Get the localized locale name.
+     */
+    public function getLabel(): string
+    {
+        $key = "filament-translatable::locales.{$this->value}";
+
+        return trans()->has($key) ? __($key) : $this->name;
+    }
 }
