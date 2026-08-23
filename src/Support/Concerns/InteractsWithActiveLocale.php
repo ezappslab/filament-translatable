@@ -36,8 +36,14 @@ trait InteractsWithActiveLocale
     /**
      * Set the active locale.
      */
-    public function setActiveLocale(Locale $locale): void
+    public function setActiveLocale(Locale|string|null $locale): void
     {
+        $locale = $this->normalizeActiveLocale($locale);
+
+        if (! $locale) {
+            return;
+        }
+
         if (! $this->isTranslatableLocale($locale)) {
             return;
         }
