@@ -51,7 +51,7 @@ trait HasTranslatableEditRecord
      */
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        return $this->updateTranslatableRecord($record, $data);
+        return $this->updateTranslatableRecord($record, $this->mergeCachedTranslationsIntoData($data));
     }
 
     /**
