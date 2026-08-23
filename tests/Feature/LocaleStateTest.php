@@ -16,6 +16,20 @@ it('uses the first configured locale by default', function (): void {
         ->assertSet('activeLocale', Locale::English);
 });
 
+it('prevents locale changes while the schema is updating', function (): void {
+    livewire(ListAnimals::class)
+        ->assertSeeHtml('<fieldset wire:loading.attr="disabled"')
+        ->assertDontSeeHtml('wire:dirty.attr="disabled"')
+        ->assertSeeHtml('<select id="activeLocale" wire:change="setActiveLocale($event.target.value)"')
+        ->assertDontSeeHtml('wire:model.live="activeLocale"');
+});
+
+it('changes locale through an explicit state transition', function (): void {
+    livewire(ListAnimals::class)
+        ->call('setActiveLocale', Locale::Bulgarian->value)
+        ->assertSet('activeLocale', Locale::Bulgarian);
+});
+
 it('persists the active locale across pages for the same resource', function (): void {
     livewire(ListAnimals::class)
         ->set('activeLocale', Locale::Bulgarian->value)
