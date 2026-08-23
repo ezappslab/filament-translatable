@@ -150,6 +150,14 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
                     continue;
                 }
 
+                if ($this->isTranslationMap($value)) {
+                    foreach ($value as $locale => $translation) {
+                        $record->setTranslation($attribute, $locale, $translation);
+                    }
+
+                    continue;
+                }
+
                 $record->setTranslation($attribute, $this->activeLocale->value, $value);
 
                 continue;
@@ -159,6 +167,23 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
         }
 
         return $record;
+    }
+
+    /**
+     * Determine whether a value contains translations keyed by configured locale.
+     */
+    protected function isTranslationMap(mixed $value): bool
+    {
+        if ((! is_array($value)) || blank($value)) {
+            return false;
+        }
+
+        $availableLocales = array_fill_keys(array_map(
+            fn (Locale $locale): string => $locale->value,
+            $this->getFilamentTranslatablePlugin()->getLocales(),
+        ), true);
+
+        return array_diff_key($value, $availableLocales) === [];
     }
 
     /**

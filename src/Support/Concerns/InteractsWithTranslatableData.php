@@ -118,6 +118,53 @@ trait InteractsWithTranslatableData
     }
 
     /**
+     * Replace each translatable value with all locale values entered during this request.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    protected function mergeCachedTranslationsIntoData(array $data, string $schemaName = 'form'): array
+    {
+        $schema = $this->getTranslatableFormSchemas()[$schemaName] ?? null;
+
+        if (! $schema) {
+            return $data;
+        }
+
+        $activeLocale = $this->getActiveLocale()->value;
+
+        foreach ($this->getTranslatableFormStatePaths($schema) as $statePath) {
+            if (! Arr::has($data, $statePath)) {
+                continue;
+            }
+
+            $translations = [];
+
+            foreach ($this->getTranslatableLocales() as $locale) {
+                $localeValue = $locale->value;
+
+                if ($localeValue === $activeLocale) {
+                    $translations[$localeValue] = Arr::get($data, $statePath);
+
+                    continue;
+                }
+
+                $cachedState = $this->translatableFormStateByLocale[$localeValue][$schemaName] ?? [];
+
+                if (array_key_exists($statePath, $cachedState)) {
+                    $translations[$localeValue] = $cachedState[$statePath];
+                }
+            }
+
+            if (filled($translations)) {
+                Arr::set($data, $statePath, $translations);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
      * Cache the current translatable form field values before switching locale.
      *
      * @param  Locale  $locale  The locale to cache state for.
