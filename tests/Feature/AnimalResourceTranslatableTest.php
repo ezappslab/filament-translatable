@@ -41,8 +41,13 @@ it('displays translated table fields using the active locale', function (): void
         ->assertTableColumnStateSet('is_active', true, $animal);
 });
 
-it('stores created translatable fields under the active locale', function (): void {
+it('stores all locale values entered before creating a record', function (): void {
     livewire(CreateAnimal::class)
+        ->fillForm([
+            'name' => 'Fox',
+            'description' => 'A clever forest animal.',
+            'is_active' => false,
+        ])
         ->set('activeLocale', Locale::Bulgarian->value)
         ->fillForm([
             'name' => 'Лисица',
@@ -56,7 +61,8 @@ it('stores created translatable fields under the active locale', function (): vo
 
     expect($animal->getTranslation('name', Locale::Bulgarian->value))->toBe('Лисица')
         ->and($animal->getTranslation('description', Locale::Bulgarian->value))->toBe('Хитро горско животно.')
-        ->and($animal->getTranslations('name'))->not->toHaveKey(Locale::English->value)
+        ->and($animal->getTranslation('name', Locale::English->value))->toBe('Fox')
+        ->and($animal->getTranslation('description', Locale::English->value))->toBe('A clever forest animal.')
         ->and($animal->is_active)->toBeFalse();
 });
 
@@ -112,7 +118,7 @@ it('updates only the active locale translation without overwriting other transla
         ->and($animal->is_active)->toBeFalse();
 });
 
-it('preserves unsaved locale-specific edit state when switching back to a locale', function (): void {
+it('saves locale-specific edit state for all locales at once', function (): void {
     $animal = createAnimalForTranslatableResourceTest();
 
     livewire(EditAnimal::class, ['record' => $animal->getKey()])
@@ -141,8 +147,8 @@ it('preserves unsaved locale-specific edit state when switching back to a locale
 
     expect($animal->getTranslation('name', Locale::English->value))->toBe('Fox')
         ->and($animal->getTranslation('description', Locale::English->value))->toBe('Moves quietly.')
-        ->and($animal->getTranslation('name', Locale::Bulgarian->value))->toBe('Вълк')
-        ->and($animal->getTranslation('description', Locale::Bulgarian->value))->toBe('Социално горско животно.');
+        ->and($animal->getTranslation('name', Locale::Bulgarian->value))->toBe('Лисица')
+        ->and($animal->getTranslation('description', Locale::Bulgarian->value))->toBe('Движи се тихо.');
 });
 
 it('displays translated view fields using the active locale', function (): void {

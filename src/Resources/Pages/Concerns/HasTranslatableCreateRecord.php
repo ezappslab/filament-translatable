@@ -19,6 +19,7 @@ trait HasTranslatableCreateRecord
      */
     protected function handleRecordCreation(array $data): Model
     {
+        $data = $this->mergeCachedTranslationsIntoData($data);
         $record = $this->makeTranslatableRecord($this->getModel(), $data);
 
         if ($parentRecord = $this->getParentRecord()) {
