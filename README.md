@@ -326,6 +326,18 @@ public static function form(Schema $schema): Schema
 In this example, `profile.headline` and `profile.biography` can be translated per
 locale when the `Profile` model uses Spatie's `HasTranslations` trait.
 
+### Loaded Relationship Locales
+
+The active locale is also applied recursively to already-loaded relationships,
+including singular relationships, collections, and nested relationships. This
+allows accessors and custom display callbacks to read related translated attributes
+using the selected locale, even when the parent model is not translatable.
+
+Propagation does not load relationships or issue additional database queries.
+Relationships loaded afterward receive the active locale the next time the record
+is processed by the content driver or accessed through an edit or view page's
+`getRecord()` method.
+
 ## Relation Managers
 
 Use `HasTranslatableRelationManager` on Filament relation managers that manage
