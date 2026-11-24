@@ -6,6 +6,7 @@ use Filament\Facades\Filament;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Infinity\FilamentTranslatable\Enums\Locale;
 use Infinity\FilamentTranslatable\FilamentTranslatablePlugin;
 
@@ -54,6 +55,8 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
      */
     public function getRecordAttributesToArray(Model $record): array
     {
+        $this->setRecordLocale($record);
+
         $data = $record->attributesToArray();
 
         if (! method_exists($record, 'getTranslation')) {
@@ -89,11 +92,41 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
      */
     public function setRecordLocale(Model $record): Model
     {
+        $visited = [];
+
+        $this->setLoadedRecordLocales($record, $visited);
+
+        return $record;
+    }
+
+    /**
+     * Apply the locale to loaded relationships without loading additional records.
+     *
+     * @param  array<int, true>  $visited
+     */
+    protected function setLoadedRecordLocales(Model $record, array &$visited): void
+    {
+        if (isset($visited[spl_object_id($record)])) {
+            return;
+        }
+
+        $visited[spl_object_id($record)] = true;
+
         if (method_exists($record, 'setLocale')) {
             $record->setLocale($this->activeLocale->value);
         }
 
-        return $record;
+        foreach ($record->getRelations() as $relation) {
+            if ($relation instanceof Model) {
+                $this->setLoadedRecordLocales($relation, $visited);
+            } elseif ($relation instanceof Collection) {
+                foreach ($relation as $relatedRecord) {
+                    if ($relatedRecord instanceof Model) {
+                        $this->setLoadedRecordLocales($relatedRecord, $visited);
+                    }
+                }
+            }
+        }
     }
 
     /**

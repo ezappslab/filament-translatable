@@ -2,6 +2,7 @@
 
 namespace Infinity\FilamentTranslatable\Resources\Pages\Concerns;
 
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Database\Eloquent\Model;
 use Infinity\FilamentTranslatable\Support\Concerns\InteractsWithActiveLocale;
 use Infinity\FilamentTranslatable\Support\Concerns\InteractsWithTranslatableData;
@@ -11,6 +12,17 @@ trait HasTranslatableViewRecord
 {
     use InteractsWithActiveLocale;
     use InteractsWithTranslatableData;
+
+    /**
+     * Get the record with the active locale applied to its loaded relationships.
+     */
+    #[Unexposed]
+    public function getRecord(): Model
+    {
+        $record = parent::getRecord();
+
+        return $this->makeFilamentTranslatableContentDriver()?->setRecordLocale($record) ?? $record;
+    }
 
     /**
      * Fill the form with record data for the active locale.
