@@ -7,6 +7,9 @@ use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Infinity\FilamentTranslatable\Enums\Locale;
 
+/**
+ * Configure the translation locales and fallback locale for a Filament panel.
+ */
 class FilamentTranslatablePlugin implements Plugin
 {
     /**
@@ -98,7 +101,7 @@ class FilamentTranslatablePlugin implements Plugin
     }
 
     /**
-     * Get the default locale from the available locales.
+     * Use the first configured locale when no valid stored selection exists.
      *
      * @throws Exception
      */

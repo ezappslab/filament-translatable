@@ -7,6 +7,9 @@ use Filament\Facades\Filament;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Infinity\FilamentTranslatable\FilamentTranslatablePlugin;
 
+/**
+ * Select a configured panel locale through the component's locale transition method.
+ */
 class SelectLocaleAction extends SelectAction
 {
     /**

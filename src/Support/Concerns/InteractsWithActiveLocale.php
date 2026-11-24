@@ -6,7 +6,11 @@ use Filament\Facades\Filament;
 use Infinity\FilamentTranslatable\Enums\Locale;
 use Infinity\FilamentTranslatable\FilamentTranslatablePlugin;
 
-/** @phpstan-ignore trait.unused */
+/**
+ * Manage validated locale transitions and persist the selection in the component scope.
+ *
+ * @phpstan-ignore trait.unused
+ */
 trait InteractsWithActiveLocale
 {
     public Locale $activeLocale;
@@ -210,7 +214,7 @@ trait InteractsWithActiveLocale
     }
 
     /**
-     * Get the resource segment for the active locale session key.
+     * Scope page locales by resource and relation manager locales by page and manager class.
      */
     protected function getActiveLocaleStorageScopeKey(): string
     {
