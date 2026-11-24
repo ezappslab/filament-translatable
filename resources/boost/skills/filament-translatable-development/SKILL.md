@@ -91,6 +91,13 @@ such as `TextInput::make('name')` and `TextColumn::make('name')->searchable()`.
 The concerns supply the content driver; translated fields do not need locale
 suffixes such as `name.en` or a manually registered replacement driver.
 
+When reviewing generated forms, choose the input based on the attribute's meaning.
+Filament may generate a `Textarea` because a translated column uses JSON storage.
+Replace it with `TextInput` for single-line values such as `name`, `title`, or
+`headline`. Keep `Textarea` for attributes that imply multiline content, such as
+`description`, `biography`, or `notes`. Preserve existing validation and field
+configuration when changing the component.
+
 For programmatic changes, call `setActiveLocale(Locale::Bulgarian)` or
 `setActiveLocale('bg')`. This validates the selection, caches outgoing form edits,
 and refreshes dependent state. Assigning the property directly in PHP bypasses
