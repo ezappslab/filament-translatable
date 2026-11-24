@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Panel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Infinity\FilamentTranslatable\Enums\Locale;
 use Infinity\FilamentTranslatable\FilamentTranslatablePlugin;
@@ -85,3 +86,50 @@ it('fails clearly when no default locale is available', function (): void {
         ->locales([])
         ->getDefaultLocale();
 })->throws(Exception::class, 'No locales defined for the filament-translatable plugin.');
+
+it('ignores invalid explicit locale selections', function (?string $locale): void {
+    livewire(ListAnimals::class)
+        ->call('setActiveLocale', Locale::Bulgarian->value)
+        ->call('setActiveLocale', $locale)
+        ->assertSet('activeLocale', Locale::Bulgarian);
+})->with([null, 'invalid', Locale::German->value]);
+
+it('uses the default locale when a stored selection is unusable', function (mixed $storedLocale): void {
+    session()->put(
+        'filament.workbench.resources.workbench.app.filament.resources.animal-resource.active_locale',
+        $storedLocale,
+    );
+
+    livewire(ListAnimals::class)->assertSet('activeLocale', Locale::English);
+})->with([['invalid'], [123], [Locale::German], [Locale::German->value]]);
+
+it('restores a valid locale stored as a string', function (): void {
+    session()->put(
+        'filament.workbench.resources.workbench.app.filament.resources.animal-resource.active_locale',
+        Locale::Bulgarian->value,
+    );
+
+    livewire(ListAnimals::class)->assertSet('activeLocale', Locale::Bulgarian);
+});
+
+it('boots plugin locales and fallback from configuration', function (): void {
+    config()->set('filament-translatable.locales', [Locale::Bulgarian, Locale::English]);
+    config()->set('filament-translatable.fallback_locale', Locale::Bulgarian);
+    $plugin = FilamentTranslatablePlugin::make();
+    $plugin->boot(Panel::make());
+
+    expect($plugin->getLocales())->toBe([Locale::Bulgarian, Locale::English])
+        ->and($plugin->getFallbackLocale())->toBe(Locale::Bulgarian);
+});
+
+it('preserves explicit plugin settings when booting', function (): void {
+    config()->set('filament-translatable.locales', [Locale::German]);
+    config()->set('filament-translatable.fallback_locale', Locale::German);
+    $plugin = FilamentTranslatablePlugin::make()
+        ->locales([Locale::Bulgarian, Locale::English])
+        ->fallbackLocale(Locale::English);
+    $plugin->boot(Panel::make());
+
+    expect($plugin->getLocales())->toBe([Locale::Bulgarian, Locale::English])
+        ->and($plugin->getFallbackLocale())->toBe(Locale::English);
+});
