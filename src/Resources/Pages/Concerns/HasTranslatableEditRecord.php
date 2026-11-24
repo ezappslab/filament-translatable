@@ -7,7 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Infinity\FilamentTranslatable\Support\Concerns\InteractsWithActiveLocale;
 use Infinity\FilamentTranslatable\Support\Concerns\InteractsWithTranslatableData;
 
-/** @phpstan-ignore trait.unused */
+/**
+ * Edit translated form state and apply the active locale when accessing the record.
+ *
+ * @phpstan-ignore trait.unused
+ */
 trait HasTranslatableEditRecord
 {
     use InteractsWithActiveLocale;

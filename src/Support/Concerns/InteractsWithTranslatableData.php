@@ -8,7 +8,11 @@ use Illuminate\Support\Arr;
 use Infinity\FilamentTranslatable\Enums\Locale;
 use Infinity\FilamentTranslatable\Support\SpatieLaravelTranslatableContentDriver;
 
-/** @phpstan-ignore trait.unused */
+/**
+ * Preserve per-locale form edits and resolve translated state through the content driver.
+ *
+ * @phpstan-ignore trait.unused
+ */
 trait InteractsWithTranslatableData
 {
     /**
@@ -56,6 +60,9 @@ trait InteractsWithTranslatableData
         return SpatieLaravelTranslatableContentDriver::class;
     }
 
+    /**
+     * Reuse a driver for each class and locale within this component instance.
+     */
     public function makeFilamentTranslatableContentDriver(): ?TranslatableContentDriver
     {
         $driver = $this->getFilamentTranslatableContentDriver();

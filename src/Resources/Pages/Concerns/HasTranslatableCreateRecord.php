@@ -6,7 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Infinity\FilamentTranslatable\Support\Concerns\InteractsWithActiveLocale;
 use Infinity\FilamentTranslatable\Support\Concerns\InteractsWithTranslatableData;
 
-/** @phpstan-ignore trait.unused */
+/**
+ * Create records using the active locale and translations cached while switching locales.
+ *
+ * @phpstan-ignore trait.unused
+ */
 trait HasTranslatableCreateRecord
 {
     use InteractsWithActiveLocale;
