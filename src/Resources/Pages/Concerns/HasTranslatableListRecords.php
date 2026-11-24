@@ -5,7 +5,11 @@ namespace Infinity\FilamentTranslatable\Resources\Pages\Concerns;
 use Infinity\FilamentTranslatable\Support\Concerns\InteractsWithActiveLocale;
 use Infinity\FilamentTranslatable\Support\Concerns\InteractsWithTranslatableData;
 
-/** @phpstan-ignore trait.unused */
+/**
+ * Expose the active table locale and invalidate table records when it changes.
+ *
+ * @phpstan-ignore trait.unused
+ */
 trait HasTranslatableListRecords
 {
     use InteractsWithActiveLocale;

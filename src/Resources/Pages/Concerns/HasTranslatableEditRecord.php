@@ -2,15 +2,31 @@
 
 namespace Infinity\FilamentTranslatable\Resources\Pages\Concerns;
 
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Database\Eloquent\Model;
 use Infinity\FilamentTranslatable\Support\Concerns\InteractsWithActiveLocale;
 use Infinity\FilamentTranslatable\Support\Concerns\InteractsWithTranslatableData;
 
-/** @phpstan-ignore trait.unused */
+/**
+ * Edit translated form state and apply the active locale when accessing the record.
+ *
+ * @phpstan-ignore trait.unused
+ */
 trait HasTranslatableEditRecord
 {
     use InteractsWithActiveLocale;
     use InteractsWithTranslatableData;
+
+    /**
+     * Get the record with the active locale applied to its loaded relationships.
+     */
+    #[Unexposed]
+    public function getRecord(): Model
+    {
+        $record = parent::getRecord();
+
+        return $this->makeFilamentTranslatableContentDriver()?->setRecordLocale($record) ?? $record;
+    }
 
     /**
      * Fill the form with record data for the active locale.

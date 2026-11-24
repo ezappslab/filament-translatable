@@ -5,7 +5,11 @@ namespace Infinity\FilamentTranslatable\Resources\RelationManagers\Concerns;
 use Infinity\FilamentTranslatable\Support\Concerns\InteractsWithActiveLocale;
 use Infinity\FilamentTranslatable\Support\Concerns\InteractsWithTranslatableData;
 
-/** @phpstan-ignore trait.unused */
+/**
+ * Coordinate translated action forms and table records within a relation manager.
+ *
+ * @phpstan-ignore trait.unused
+ */
 trait HasTranslatableRelationManager
 {
     use InteractsWithActiveLocale;

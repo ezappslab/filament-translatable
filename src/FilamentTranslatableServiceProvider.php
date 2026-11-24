@@ -6,6 +6,9 @@ use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
+/**
+ * Register package configuration, locale labels, and the installation command.
+ */
 class FilamentTranslatableServiceProvider extends PackageServiceProvider
 {
     /**

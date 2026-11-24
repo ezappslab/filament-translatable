@@ -81,23 +81,21 @@ class AdminPanelProvider extends PanelProvider
 
 ## Preparing Models
 
-Use Spatie's `HasTranslations` trait on any model that has translated attributes.
+Use Spatie's `HasTranslations` trait and declare translated columns with the
+`#[Translatable]` attribute on the model class.
 The translated columns should be JSON-compatible columns in your database.
 
 ```php
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Translatable\Attributes\Translatable;
 use Spatie\Translatable\HasTranslations;
 
+#[Translatable('name', 'description')]
 class Product extends Model
 {
     use HasTranslations;
-
-    public array $translatable = [
-        'name',
-        'description',
-    ];
 
     protected $fillable = [
         'name',
@@ -324,7 +322,21 @@ public static function form(Schema $schema): Schema
 ```
 
 In this example, `profile.headline` and `profile.biography` can be translated per
-locale when the `Profile` model uses Spatie's `HasTranslations` trait.
+locale when the `Profile` model uses Spatie's `HasTranslations` trait and declares
+`#[Translatable('headline', 'biography')]` using
+`Spatie\Translatable\Attributes\Translatable`.
+
+### Loaded Relationship Locales
+
+The active locale is also applied recursively to already-loaded relationships,
+including singular relationships, collections, and nested relationships. This
+allows accessors and custom display callbacks to read related translated attributes
+using the selected locale, even when the parent model is not translatable.
+
+Propagation does not load relationships or issue additional database queries.
+Relationships loaded afterward receive the active locale the next time the record
+is processed by the content driver or accessed through an edit or view page's
+`getRecord()` method.
 
 ## Relation Managers
 

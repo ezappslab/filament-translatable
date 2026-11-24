@@ -6,9 +6,13 @@ use Filament\Facades\Filament;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Infinity\FilamentTranslatable\Enums\Locale;
 use Infinity\FilamentTranslatable\FilamentTranslatablePlugin;
 
+/**
+ * Bridge Filament content operations to Spatie translations for one active locale.
+ */
 class SpatieLaravelTranslatableContentDriver implements TranslatableContentDriver
 {
     /**
@@ -48,12 +52,16 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
     }
 
     /**
-     * Get the record attributes for the active locale.
+     * Get attributes for the active locale without falling back for missing translations.
+     *
+     * Apply model locales first so accessors can read translated loaded relationships.
      *
      * @return array<string, mixed>
      */
     public function getRecordAttributesToArray(Model $record): array
     {
+        $this->setRecordLocale($record);
+
         $data = $record->attributesToArray();
 
         if (! method_exists($record, 'getTranslation')) {
@@ -85,15 +93,51 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
     }
 
     /**
-     * Set the active locale on the record.
+     * Set the active locale on the record and all reachable loaded related models.
+     *
+     * Start a fresh traversal for each call so locale switches and newly loaded
+     * relationships are processed. The original record instance is returned.
      */
     public function setRecordLocale(Model $record): Model
     {
+        $visited = [];
+
+        $this->setLoadedRecordLocales($record, $visited);
+
+        return $record;
+    }
+
+    /**
+     * Apply the locale to loaded relationships without loading additional records.
+     *
+     * Track object identities to stop cycles and avoid revisiting shared instances.
+     * Traverse non-translatable models too, since their relations may be translatable.
+     *
+     * @param  array<int, true>  $visited
+     */
+    protected function setLoadedRecordLocales(Model $record, array &$visited): void
+    {
+        if (isset($visited[spl_object_id($record)])) {
+            return;
+        }
+
+        $visited[spl_object_id($record)] = true;
+
         if (method_exists($record, 'setLocale')) {
             $record->setLocale($this->activeLocale->value);
         }
 
-        return $record;
+        foreach ($record->getRelations() as $relation) {
+            if ($relation instanceof Model) {
+                $this->setLoadedRecordLocales($relation, $visited);
+            } elseif ($relation instanceof Collection) {
+                foreach ($relation as $relatedRecord) {
+                    if ($relatedRecord instanceof Model) {
+                        $this->setLoadedRecordLocales($relatedRecord, $visited);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -135,7 +179,8 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
     }
 
     /**
-     * Fill the record attributes for the active locale.
+     * Fill translated attributes in the active locale or merge supplied translation maps.
+     * Non-translatable values are assigned through the normal model attribute API.
      *
      * @param  array<string, mixed>  $data
      */
